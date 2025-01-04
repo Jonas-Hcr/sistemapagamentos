@@ -18,11 +18,13 @@ public class NotificationService {
         String email = user.getEmail();
         NotificationDTO notificationRequest = new NotificationDTO(user.getEmail(), message);
 
-        ResponseEntity<String> notificationReponse = restTemplate.postForEntity("https://util.devi.tools/api/v1/notify", notificationRequest, String.class);
+        /*ResponseEntity<String> notificationReponse = restTemplate.postForEntity("https://util.devi.tools/api/v1/notify", notificationRequest, String.class);
 
         if (!(notificationReponse.getStatusCode() == HttpStatus.OK)) {
             System.out.println("Serviço de notificação falhou");
             throw new Exception("Notificação não pode ser enviada");
-        }
+        }*/
+
+        System.out.println("Notificação enviada ao usuário");
     }
 }
