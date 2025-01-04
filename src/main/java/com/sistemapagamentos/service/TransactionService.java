@@ -4,6 +4,7 @@ import com.sistemapagamentos.domain.transaction.Transaction;
 import com.sistemapagamentos.domain.user.User;
 import com.sistemapagamentos.dtos.TransactionDTO;
 import com.sistemapagamentos.repositories.TransactionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class TransactionService {
 
@@ -33,7 +35,7 @@ public class TransactionService {
 
         userService.validateTransaction(sender, transaction.value());
 
-        Boolean isAuthorize = this.authorizeTransaction(sender, transaction.value());
+        boolean isAuthorize = this.authorizeTransaction(sender, transaction.value());
 
         if (!isAuthorize) {
             throw new Exception("Transação não autorizada");
@@ -68,8 +70,8 @@ public class TransactionService {
                 return "success".equals(status);
             }
         } catch (RestClientException e) {
-            System.out.println("authorizeTransaction");
-            System.out.println(e);
+            log.error("authorizeTransaction");
+            log.error("e: ", e);
         }
         return false;
     }
