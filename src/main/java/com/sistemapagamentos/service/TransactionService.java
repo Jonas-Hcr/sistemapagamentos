@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -19,11 +20,11 @@ public class TransactionService {
 
     @Autowired
     private TransactionRepository repository;
-
+    @Autowired
     private UserService userService;
-
+    @Autowired
     private RestTemplate restTemplate;
-
+    @Autowired
     private NotificationService notificationService;
 
     public Transaction createTransaction(TransactionDTO transaction) throws Exception {
@@ -58,12 +59,18 @@ public class TransactionService {
     }
 
     public boolean authorizeTransaction(User sender, BigDecimal value) {
-        ResponseEntity<Map> authorizeResponse = restTemplate.getForEntity("https://util.devi.tools/api/v2/authorize", Map.class);
+        try {
+            ResponseEntity<Map> authorizeResponse = restTemplate.getForEntity("https://util.devi.tools/api/v2/authorize", Map.class);
 
-        if (authorizeResponse.getStatusCode() == HttpStatus.OK) {
-            String status = (String) authorizeResponse.getBody().get("status");
+            if (authorizeResponse.getStatusCode() == HttpStatus.OK) {
+                String status = (String) authorizeResponse.getBody().get("status");
 
-            return "success".equals(status);
-        } else return false;
+                return "success".equals(status);
+            }
+        } catch (RestClientException e) {
+            System.out.println("authorizeTransaction");
+            System.out.println(e);
+        }
+        return false;
     }
 }
